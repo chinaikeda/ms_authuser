@@ -23,7 +23,6 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private UUID userId;
 
     @Column(nullable = false, unique = true, length = 50)
-
     private String username;
     @Column(nullable = false, unique = true, length = 50)
     private String email;
@@ -50,11 +49,11 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private String imageUrl;
 
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+//  Substituído pela configuração global em configs>DateConfig
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime creationDate;
 
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime lastUpdateDate;
 
     public UUID getUserId() {
