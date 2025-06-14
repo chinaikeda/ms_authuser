@@ -64,6 +64,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userRecordDto, userService.findById(userId).get()));
     }
 
+    @PutMapping("/{userId}/active")
+    public ResponseEntity<Object> updateActive(@PathVariable(value = "userId") UUID userId) {
+        logger.debug("PUT updateActive userId received {} ", userId);
+        userService.updateActive(userService.findById(userId).get());
+        return ResponseEntity.status(HttpStatus.OK).body("User has active");
+    }
+
+    @PutMapping("/{userId}/blocked")
+    public ResponseEntity<Object> updateBlocked(@PathVariable(value = "userId") UUID userId) {
+        logger.debug("PUT updateBlocked userId received {} ", userId);
+        userService.updateBlocked(userService.findById(userId).get());
+        return ResponseEntity.status(HttpStatus.OK).body("User has blocked");
+    }
+
     @PutMapping("/{userId}/password")
     public ResponseEntity<Object> updatePassword(@PathVariable(value = "userId") UUID userId,
                                                  @RequestBody

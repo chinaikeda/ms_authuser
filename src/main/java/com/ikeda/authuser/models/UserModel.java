@@ -23,7 +23,8 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private UUID userId;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String username;
+    private String login;
+
     @Column(nullable = false, unique = true, length = 50)
     private String email;
 
@@ -32,7 +33,7 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private String password;
 
     @Column(nullable = false, unique = true, length = 150)
-    private String fullName;
+    private String name;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -64,12 +65,12 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getLogin() {
+        return login;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getEmail() {
@@ -88,12 +89,12 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
         this.password = password;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public UserStatus getUserStatus() {

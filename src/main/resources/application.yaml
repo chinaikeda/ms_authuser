@@ -21,6 +21,11 @@ spring:
     ansi:
       enabled: Always
 
+ikeda:
+  api:
+    url:
+      register: 'http://localhost:8082/ikeda-register'
+
 logging:
   level:
     com.ikeda: TRACE

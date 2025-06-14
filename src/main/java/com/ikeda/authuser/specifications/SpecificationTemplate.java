@@ -14,8 +14,8 @@ public class SpecificationTemplate {
         @Spec(path = "userType", spec = Equal.class),
         @Spec(path = "userStatus", spec = Equal.class),
         @Spec(path = "email", spec = Like.class),
-        @Spec(path = "username", spec = Like.class),
-        @Spec(path = "fullName", spec = LikeIgnoreCase.class)
+        @Spec(path = "login", spec = Equal.class),
+        @Spec(path = "name", spec = LikeIgnoreCase.class)
     })
     public interface UserSpec extends Specification<UserModel> {}
 }

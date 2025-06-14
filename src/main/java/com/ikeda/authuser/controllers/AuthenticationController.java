@@ -28,9 +28,9 @@ public class AuthenticationController {
                                                @JsonView(UserRecordDto.UserView.RegistrationPost.class)
                                                UserRecordDto userRecordDto){
         logger.debug("POST registerUser userRecordDto received {} ", userRecordDto);
-        if (userService.existsByUsername(userRecordDto.username())) {
-            logger.warn("Username {} is Already Taken ", userRecordDto.username());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
+        if (userService.existsByLogin(userRecordDto.login())) {
+            logger.warn("Login {} is Already Taken ", userRecordDto.login());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Login is Already Taken!");
         }
 
         if (userService.existsByEmail(userRecordDto.email())) {
@@ -38,6 +38,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
         }
 
+        // TODO: Exitem dois tipos de cadastros,
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userRecordDto));
     }
 
@@ -47,6 +48,8 @@ public class AuthenticationController {
         if (errors.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors());
         }
+
+        // TODO: Exitem dois tipos de cadastros,
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUserAdmin(userRecordDto));
     }
 

@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     public UserModel registerUser(UserRecordDto userRecordDto) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userRecordDto, userModel);
-        userModel.setUserStatus(UserStatus.ACTIVE);
+        userModel.setUserStatus(UserStatus.PENDING);
         userModel.setUserType(UserType.USER);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
@@ -60,8 +60,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+    public boolean existsByLogin(String login) {
+        return userRepository.existsByLogin(login);
     }
 
     @Override
@@ -71,9 +71,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserModel updateUser(UserRecordDto userRecordDto, UserModel userModel) {
-        userModel.setFullName(userRecordDto.fullName());
+        userModel.setName(userRecordDto.name());
         userModel.setPhoneNumber(userRecordDto.phoneNumber());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        return userRepository.save(userModel);
+    }
+
+    @Override
+    public UserModel updateActive(UserModel userModel) {
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        userModel.setUserStatus(UserStatus.ACTIVE);
+        return userRepository.save(userModel);
+    }
+
+    @Override
+    public UserModel updateBlocked(UserModel userModel) {
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        userModel.setUserStatus(UserStatus.ACTIVE);
         return userRepository.save(userModel);
     }
 
@@ -97,7 +111,6 @@ public class UserServiceImpl implements UserService {
 
         BeanUtils.copyProperties(userRecordDto, userModel);
 
-        userModel.setUserStatus(UserStatus.ACTIVE);
         userModel.setUserType(UserType.ADMIN);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));

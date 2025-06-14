@@ -19,11 +19,15 @@ public interface UserService {
 
     UserModel registerUser(UserRecordDto userRecordDto);
 
-    boolean existsByUsername(String username);
+    boolean existsByLogin(String login);
 
     boolean existsByEmail(String email);
 
     UserModel updateUser(UserRecordDto userRecordDto, UserModel userModel);
+
+    UserModel updateActive(UserModel userModel);
+
+    UserModel updateBlocked(UserModel userModel);
 
     UserModel updatePassword(UserRecordDto userRecordDto, UserModel userModel);
 
