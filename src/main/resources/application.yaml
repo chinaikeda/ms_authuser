@@ -4,6 +4,8 @@ server:
     context-path: '/ikeda-authuser/'
 
 spring:
+  application:
+    name: ikeda-authuser-ms
   datasource:
     url: jdbc:postgresql://localhost:5432/ikeda-authuser
     username: postgres
@@ -24,7 +26,7 @@ spring:
 ikeda:
   api:
     url:
-      register: 'http://localhost:8082/ikeda-register'
+      register: 'http://ikeda-register-ms/ikeda-register'
 
 logging:
   level:
@@ -32,3 +34,10 @@ logging:
     root: INFO
     org.springframework.web: DEBUG
     org.hibernate: INFO
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: 'http://localhost:8761/eureka'
+  instance:
+    hostname: localhost

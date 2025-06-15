@@ -39,6 +39,8 @@ public class AuthenticationController {
         }
 
         // TODO: Exitem dois tipos de cadastros,
+        //  o primeiro Users que segue para Person, enviando a notificação com userId para finalizar o cadastro em Person e trocar o status para active
+        //  o segundo Person que decide ter um Users (será implementado)
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userRecordDto));
     }
 
@@ -50,6 +52,8 @@ public class AuthenticationController {
         }
 
         // TODO: Exitem dois tipos de cadastros,
+        //  o primeiro Users que segue para Person, enviando a notificação com userId para finalizar o cadastro em Person e trocar o status para active
+        //  o segundo Person que decide ter um Users (será implementado)
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUserAdmin(userRecordDto));
     }
 
