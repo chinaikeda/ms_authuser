@@ -2,9 +2,12 @@ package com.ikeda.authuser.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ikeda.authuser.dtos.UserEventDto;
+import com.ikeda.authuser.enums.ActionType;
 import com.ikeda.authuser.enums.UserStatus;
 import com.ikeda.authuser.enums.UserType;
 import jakarta.persistence.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
@@ -55,6 +58,15 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
 
     @Column(nullable = false)
     private LocalDateTime lastUpdateDate;
+
+    public UserEventDto convertToUserEventDto(ActionType actionType){
+        var userEventDto = new UserEventDto();
+        BeanUtils.copyProperties(this, userEventDto);
+        userEventDto.setUserType(this.getUserType().toString());
+        userEventDto.setUserStatus(this.getUserStatus().toString());
+        userEventDto.setActionType(actionType.toString());
+        return userEventDto;
+    }
 
     public UUID getUserId() {
         return userId;

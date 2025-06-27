@@ -11,10 +11,10 @@ public record UserRecordDto(@NotBlank(groups = UserView.RegistrationPost.class, 
                             @JsonView(UserView.RegistrationPost.class)
                             String login,
 
-                            @NotBlank(groups = UserView.RegistrationPost.class, message = "Email is mandatory")
+                            @NotBlank(groups = {UserView.RegistrationPost.class, UserView.UserPut.class}, message = "Email is mandatory")
                             @Email(groups = UserView.RegistrationPost.class, message = "Email must be in the expected format")
                             @NotBlank
-                            @JsonView(UserView.RegistrationPost.class)
+                            @JsonView({UserView.RegistrationPost.class, UserView.UserPut.class})
                             String email,
 
                             @NotBlank(groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class}, message = "Password is mandatory")

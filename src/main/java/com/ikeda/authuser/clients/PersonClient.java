@@ -16,7 +16,7 @@ public class PersonClient {
 
     Logger logger = LogManager.getLogger(PersonClient.class);
 
-    @Value("${ikeda.api.url.register}")
+    @Value("${ikeda.api.url.operational}")
     String baseUrlPerson;
 
     final RestClient restClient;

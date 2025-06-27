@@ -24,10 +24,16 @@ spring:
     ansi:
       enabled: Always
 
+  rabbitmq:
+    addresses: amqps://rsihlisc:axa05zW1si_mXwwN24c3vKjMmTEW9HTZ@beaver.rmq.cloudamqp.com/rsihlisc
+
 ikeda:
   api:
     url:
-      register: 'http://ikeda-register-ms/ikeda-register'
+      operational: 'http://ikeda-operational-ms/ikeda-operational'
+  broker:
+    exchange:
+      userEvent: ikeda.userevent
 
 logging:
   level:

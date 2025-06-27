@@ -38,7 +38,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
         }
 
-        // TODO: Exitem dois tipos de cadastros,
+        // TODO - AI : Exitem dois tipos de cadastros,
         //  o primeiro Users que segue para Person, enviando a notificação com userId para finalizar o cadastro em Person e trocar o status para active
         //  o segundo Person que decide ter um Users (será implementado)
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userRecordDto));
@@ -51,7 +51,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors());
         }
 
-        // TODO: Exitem dois tipos de cadastros,
+        // TODO - AI : Exitem dois tipos de cadastros,
         //  o primeiro Users que segue para Person, enviando a notificação com userId para finalizar o cadastro em Person e trocar o status para active
         //  o segundo Person que decide ter um Users (será implementado)
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUserAdmin(userRecordDto));
