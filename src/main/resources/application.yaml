@@ -1,66 +1,9 @@
-server:
-  port: 8087
-  servlet:
-    context-path: '/ikeda-authuser/'
-
 spring:
   application:
     name: ikeda-authuser-ms
-  datasource:
-    url: jdbc:postgresql://localhost:5432/ikeda-authuser
-    username: postgres
-    password: zaq1@wsx
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show_sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-        lob:
-          non-contextual-creation: true
-  output:
-    ansi:
-      enabled: Always
-
-  rabbitmq:
-    addresses: amqps://rsihlisc:axa05zW1si_mXwwN24c3vKjMmTEW9HTZ@beaver.rmq.cloudamqp.com/rsihlisc
-
-ikeda:
-  api:
-    url:
-      operational: 'http://ikeda-operational-ms/ikeda-operational'
-  broker:
-    exchange:
-      userEvent: ikeda.userevent
-
-logging:
-  level:
-    com.ikeda: TRACE
-    root: INFO
-    org.springframework.web: DEBUG
-    org.hibernate: INFO
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: 'http://localhost:8761/eureka'
-  instance:
-    hostname: localhost
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      circuitbreakerInstance:
-        slidingWindowSize: 30
-        permittedNumberOfCallsInHalfOpenState: 2
-        slidingWindowType: TIME_BASED
-        minimumNumberOfCalls: 2
-        waitDurationInOpenState: 15s
-        failureRateThreshold: 80
-  retry:
-    instances:
-      retryInstance:
-        maxAttempts: 3
-        waitDuration: 5s
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      discovery:
+        serviceId: ikeda-config-server
