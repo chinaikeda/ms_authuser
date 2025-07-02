@@ -1,7 +1,11 @@
 package com.ikeda.authuser.controllers;
 
-import com.ikeda.authuser.clients.PersonClient;
-import com.ikeda.authuser.dtos.PersonRecordDto;
+import com.ikeda.authuser.clients.OperationalClient;
+import com.ikeda.authuser.dtos.UserRecordDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,14 +17,16 @@ import java.util.UUID;
 @RestController
 public class UserPersonController {
 
-    final PersonClient personClient;
+    final OperationalClient operationalClient;
 
-    public UserPersonController(PersonClient personClient) {
-        this.personClient = personClient;
+    public UserPersonController(OperationalClient operationalClient) {
+        this.operationalClient = operationalClient;
     }
 
-    @GetMapping("/users/{userId}/person")
-    public ResponseEntity<PersonRecordDto> getPersonUser(@PathVariable(value = "userId") UUID userId){
-        return ResponseEntity.status(HttpStatus.OK).body(personClient.getPersonUser(userId));
+    @GetMapping("/users/{userId}/operational")
+    public ResponseEntity<Page<UserRecordDto>> getPersonUser(
+            @PageableDefault(sort = "userId", direction = Sort.Direction.ASC) Pageable pageable,
+            @PathVariable(value = "userId") UUID userId){
+        return ResponseEntity.status(HttpStatus.OK).body(operationalClient.getOperationalUser(userId, pageable));
     }
 }
