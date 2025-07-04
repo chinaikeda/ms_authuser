@@ -2,17 +2,20 @@ package com.ikeda.authuser.services.impl;
 
 import com.ikeda.authuser.dtos.UserRecordDto;
 import com.ikeda.authuser.enums.ActionType;
+import com.ikeda.authuser.enums.RoleType;
 import com.ikeda.authuser.enums.UserStatus;
 import com.ikeda.authuser.enums.UserType;
 import com.ikeda.authuser.exceptions.NotFoundException;
 import com.ikeda.authuser.models.UserModel;
 import com.ikeda.authuser.publishers.UserEventPublisher;
 import com.ikeda.authuser.repositories.UserRepository;
+import com.ikeda.authuser.services.RoleService;
 import com.ikeda.authuser.services.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +30,14 @@ public class UserServiceImpl implements UserService {
 
     final UserRepository userRepository;
     final UserEventPublisher userEventPublisher;
+    final RoleService roleService;
+    final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserEventPublisher userEventPublisher) {
+    public UserServiceImpl(UserRepository userRepository, UserEventPublisher userEventPublisher, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userEventPublisher = userEventPublisher;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -64,6 +71,8 @@ public class UserServiceImpl implements UserService {
         userModel.setUserType(UserType.USER);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
+        userModel.getRoles().add(roleService.findByRoleName(RoleType.ROLE_USER));
         userRepository.save(userModel);
 
 //        TODO - AI - enviar uma notificação com o link para inserção de person com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
@@ -73,8 +82,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByLogin(String login) {
-        return userRepository.existsByLogin(login);
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     @Override
@@ -120,7 +129,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserModel updatePassword(UserRecordDto userRecordDto, UserModel userModel) {
-        userModel.setPassword(userRecordDto.password());
+        userModel.setPassword(passwordEncoder.encode(userRecordDto.password()));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userRepository.save(userModel);
 

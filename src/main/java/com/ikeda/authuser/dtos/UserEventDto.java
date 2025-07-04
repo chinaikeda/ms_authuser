@@ -11,7 +11,7 @@ import java.util.UUID;
 public class UserEventDto {
 
     private UUID userId;
-    private String login;
+    private String username;
     private String email;
     private String name;
     private String userStatus;
@@ -28,12 +28,12 @@ public class UserEventDto {
         this.userId = userId;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUserName() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

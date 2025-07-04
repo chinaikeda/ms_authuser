@@ -6,10 +6,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record UserRecordDto(@NotBlank(groups = UserView.RegistrationPost.class, message = "Login is mandatory")
+public record UserRecordDto(@NotBlank(groups = UserView.RegistrationPost.class, message = "Username is mandatory")
                             @Size(min = 10, max = 30, groups = UserView.RegistrationPost.class, message = "Size between 10 and 30")
                             @JsonView(UserView.RegistrationPost.class)
-                            String login,
+                            String username,
 
                             @NotBlank(groups = {UserView.RegistrationPost.class, UserView.UserPut.class}, message = "Email is mandatory")
                             @Email(groups = UserView.RegistrationPost.class, message = "Email must be in the expected format")

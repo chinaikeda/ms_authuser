@@ -1,12 +1,20 @@
 package com.ikeda.authuser.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.ikeda.authuser.configs.security.JwtProvider;
+import com.ikeda.authuser.dtos.JwtRecordDto;
+import com.ikeda.authuser.dtos.LoginRecordDto;
 import com.ikeda.authuser.dtos.UserRecordDto;
 import com.ikeda.authuser.services.UserService;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +25,13 @@ public class AuthenticationController {
 
     Logger logger = LogManager.getLogger(AuthenticationController.class);
     final UserService userService;
+    final JwtProvider jwtProvider;
+    final AuthenticationManager authenticationManager;
 
-    public AuthenticationController(UserService userService) {
+    public AuthenticationController(UserService userService, JwtProvider jwtProvider, AuthenticationManager authenticationManager) {
         this.userService = userService;
+        this.jwtProvider = jwtProvider;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/signup")
@@ -28,9 +40,9 @@ public class AuthenticationController {
                                                @JsonView(UserRecordDto.UserView.RegistrationPost.class)
                                                UserRecordDto userRecordDto){
         logger.debug("POST registerUser userRecordDto received {} ", userRecordDto);
-        if (userService.existsByLogin(userRecordDto.login())) {
-            logger.warn("Login {} is Already Taken ", userRecordDto.login());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Login is Already Taken!");
+        if (userService.existsByUsername(userRecordDto.username())) {
+            logger.warn("Username {} is Already Taken ", userRecordDto.username());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
         }
 
         if (userService.existsByEmail(userRecordDto.email())) {
@@ -55,6 +67,15 @@ public class AuthenticationController {
         //  o primeiro Users que segue para Person, enviando a notificação com userId para finalizar o cadastro em Person e trocar o status para active
         //  o segundo Person que decide ter um Users (será implementado)
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUserAdmin(userRecordDto));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<JwtRecordDto> authenticateUser(@RequestBody @Valid LoginRecordDto loginRecordDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRecordDto.username(), loginRecordDto.password())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new JwtRecordDto(jwtProvider.generateJwt(authentication)));
     }
 
     @GetMapping("/logs")

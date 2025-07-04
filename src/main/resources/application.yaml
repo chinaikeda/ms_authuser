@@ -7,3 +7,5 @@ spring:
     config:
       discovery:
         serviceId: ikeda-config-server
+      username: configserver
+      password: '123456GHJKLMN'

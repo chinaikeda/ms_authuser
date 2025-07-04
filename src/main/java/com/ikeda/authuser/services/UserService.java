@@ -19,7 +19,7 @@ public interface UserService {
 
     UserModel registerUser(UserRecordDto userRecordDto);
 
-    boolean existsByLogin(String login);
+    boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
 

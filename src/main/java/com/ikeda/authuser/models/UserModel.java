@@ -2,6 +2,7 @@ package com.ikeda.authuser.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ikeda.authuser.dtos.UserEventDto;
 import com.ikeda.authuser.enums.ActionType;
 import com.ikeda.authuser.enums.UserStatus;
@@ -12,6 +13,8 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -25,7 +28,7 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private UUID userId;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String login;
+    private String username;
 
     @Column(nullable = false, unique = true, length = 50)
     private String email;
@@ -59,6 +62,15 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     @Column(nullable = false)
     private LocalDateTime lastUpdateDate;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "TB_USERS_ROLES",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleModel> roles = new HashSet<>();
+
+
     public UserEventDto convertToUserEventDto(ActionType actionType){
         var userEventDto = new UserEventDto();
         BeanUtils.copyProperties(this, userEventDto);
@@ -76,12 +88,12 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
         this.userId = userId;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -155,4 +167,13 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+
+    public Set<RoleModel> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleModel> roles) {
+        this.roles = roles;
+    }
+
 }
