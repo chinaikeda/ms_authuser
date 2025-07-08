@@ -152,13 +152,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel registerUserAdmin(UserRecordDto userRecordDto) {
         var userModel = new UserModel();
-
         BeanUtils.copyProperties(userRecordDto, userModel);
-
+        userModel.setUserStatus(UserStatus.PENDING);
         userModel.setUserType(UserType.ADMIN);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        userModel.setPassword(userModel.getPassword());
+        userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
+        userModel.getRoles().add(roleService.findByRoleName(RoleType.ROLE_ADMIN));
         userRepository.save(userModel);
 
 //        TODO - AI - enviar uma notificação com o link para inserção de person com userId para conclusão do cadastro e consequentemente a alteração do status acima para active

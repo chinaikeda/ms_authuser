@@ -39,7 +39,7 @@ public class AuthenticationController {
                                                @Validated(UserRecordDto.UserView.RegistrationPost.class)
                                                @JsonView(UserRecordDto.UserView.RegistrationPost.class)
                                                UserRecordDto userRecordDto){
-        logger.debug("POST registerUser userRecordDto received {} ", userRecordDto);
+        logger.info(String.format("Authentication userId {%s} - registerUser username received {%s} ", "Sem authenticação", userRecordDto.username()));
         if (userService.existsByUsername(userRecordDto.username())) {
             logger.warn("Username {} is Already Taken ", userRecordDto.username());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
@@ -59,6 +59,7 @@ public class AuthenticationController {
     @PostMapping("/signup/admin/user")
     public ResponseEntity<Object> registerUserAdmin(UserRecordDto userRecordDto,
                                                     Errors errors){
+        logger.info(String.format("Authentication userId {%s} - registerUserAdmin username received {%s} ", "Sem authenticação", userRecordDto.username()));
         if (errors.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors());
         }
@@ -71,6 +72,8 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtRecordDto> authenticateUser(@RequestBody @Valid LoginRecordDto loginRecordDto){
+        logger.info(String.format("Authentication username received {%s} - authenticateUser ", loginRecordDto.username()));
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRecordDto.username(), loginRecordDto.password())
         );

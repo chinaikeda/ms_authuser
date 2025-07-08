@@ -38,9 +38,31 @@ public class OperationalClient {
 
 //    @Retry(name = "retryInstance", fallbackMethod = "retryfallback")
     @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitbreakerfallback")
-    public Page<UserRecordDto> getOperationalUser(UUID userId, Pageable pageable, String token){
-        String url = baseUrlOperational + "/users?userId=" + userId + "&page=" + pageable.getPageNumber() + "&size="
-                + pageable.getPageSize() + "&sort=" + pageable.getSort().toString().replaceAll(": ", ",");
+    public Page<UserRecordDto> getOperationalOneUser(UUID userId, Pageable pageable, String token){
+        String url = baseUrlOperational + "/users?userId=" + userId;
+        logger.debug("Request URL: {} ", url);
+
+        try {
+            return restClient.get()
+                    .uri(url)
+                    .header("Authorization", token)
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<ResponsePageDto<UserRecordDto>>() {});
+        } catch (HttpStatusCodeException e){
+            logger.error("Error Request RestClient with status: {}, cause: {}", e.getStatusCode(), e.getMessage());
+            switch (e.getStatusCode()){
+                case HttpStatus.FORBIDDEN -> throw new AccessDeniedException("Forbidden");
+                default -> throw new RuntimeException("Error Request RestClient", e);
+            }
+        } catch (RestClientException e){
+            logger.error("Error Request RestClient with cause: {} ", e.getMessage());
+            throw new RuntimeException("Error Request RestClient", e);
+        }
+    }
+
+    @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitbreakerfallback")
+    public Page<UserRecordDto> getOperationalAllUsers(Pageable pageable, String token){
+        String url = baseUrlOperational + "/users";
         logger.debug("Request URL: {} ", url);
 
         try {
