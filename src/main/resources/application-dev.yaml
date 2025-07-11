@@ -4,6 +4,6 @@ spring:
   cloud:
     config:
       discovery:
-        serviceId: ikeda-config-server
+        serviceId: ikeda-config-server-ms
       username: configserver
       password: '123456GHJKLMN'
