@@ -1,11 +1,5 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: ikeda-authuser-ms
-  config:
-    import: 'configserver:'
-  cloud:
-    config:
-      discovery:
-        serviceId: ikeda-config-server
-      username: configserver
-      password: '123456GHJKLMN'
