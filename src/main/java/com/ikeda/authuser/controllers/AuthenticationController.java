@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,7 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
     }
 
+//    @PreAuthorize("hasAnyRole('USER')")
     @PostMapping("/signup")
     public ResponseEntity<Object> registerUser(@RequestBody
                                                @Validated(UserRecordDto.UserView.RegistrationPost.class)
@@ -56,6 +58,7 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userRecordDto));
     }
 
+//    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/signup/admin/user")
     public ResponseEntity<Object> registerUserAdmin(UserRecordDto userRecordDto,
                                                     Errors errors){
@@ -70,6 +73,7 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUserAdmin(userRecordDto));
     }
 
+//    @PreAuthorize("hasAnyRole('USER')")
     @PostMapping("/login")
     public ResponseEntity<JwtRecordDto> authenticateUser(@RequestBody @Valid LoginRecordDto loginRecordDto){
         logger.info(String.format("Authentication username received {%s} - authenticateUser ", loginRecordDto.username()));

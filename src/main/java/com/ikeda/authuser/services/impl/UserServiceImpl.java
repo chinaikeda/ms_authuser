@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
         userModel.getRoles().add(roleService.findByRoleName(RoleType.ROLE_USER));
         userRepository.save(userModel);
 
-//        TODO - AI - enviar uma notificação com o link para inserção de person com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
+//      TODO - AI - enviar uma notificação com o link para inserção de user com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.CREATE));
 
         return userModel;
@@ -111,6 +111,8 @@ public class UserServiceImpl implements UserService {
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setUserStatus(UserStatus.ACTIVE);
         userRepository.save(userModel);
+
+        userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.UPDATE));
 
         return userModel;
     }
@@ -161,7 +163,7 @@ public class UserServiceImpl implements UserService {
         userModel.getRoles().add(roleService.findByRoleName(RoleType.ROLE_ADMIN));
         userRepository.save(userModel);
 
-//        TODO - AI - enviar uma notificação com o link para inserção de person com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
+//      TODO - AI - enviar uma notificação com o link para inserção de user com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.CREATE));
 
         return userModel;
@@ -170,5 +172,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserModel> findAll(Specification<UserModel> spec, Pageable pageable) {
         return userRepository.findAll(spec, pageable);
+    }
+
+    @Transactional
+    @Override
+    public UserModel updateUserByPaymentEvents(UserModel userModel) {
+        userRepository.save(userModel);
+
+        userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.UPDATE));
+
+        return userModel;
     }
 }

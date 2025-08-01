@@ -36,4 +36,6 @@ public interface UserService {
     UserModel registerUserAdmin(UserRecordDto userRecordDto);
 
     Page<UserModel> findAll(Specification<UserModel> spec, Pageable pageable);
+
+    UserModel updateUserByPaymentEvents(UserModel userModel);
 }
