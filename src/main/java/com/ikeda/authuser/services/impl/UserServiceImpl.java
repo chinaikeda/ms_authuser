@@ -1,5 +1,6 @@
 package com.ikeda.authuser.services.impl;
 
+import com.ikeda.authuser.dtos.NotificationRecordCommandDto;
 import com.ikeda.authuser.dtos.UserRecordDto;
 import com.ikeda.authuser.enums.ActionType;
 import com.ikeda.authuser.enums.RoleType;
@@ -7,10 +8,13 @@ import com.ikeda.authuser.enums.UserStatus;
 import com.ikeda.authuser.enums.UserType;
 import com.ikeda.authuser.exceptions.NotFoundException;
 import com.ikeda.authuser.models.UserModel;
+import com.ikeda.authuser.publishers.NotificationCommandPublisher;
 import com.ikeda.authuser.publishers.UserEventPublisher;
 import com.ikeda.authuser.repositories.UserRepository;
 import com.ikeda.authuser.services.RoleService;
 import com.ikeda.authuser.services.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,16 +32,20 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
+    Logger logger = LogManager.getLogger(UserServiceImpl.class);
+
     final UserRepository userRepository;
     final UserEventPublisher userEventPublisher;
     final RoleService roleService;
     final PasswordEncoder passwordEncoder;
+    final NotificationCommandPublisher notificationCommandPublisher;
 
-    public UserServiceImpl(UserRepository userRepository, UserEventPublisher userEventPublisher, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, UserEventPublisher userEventPublisher, RoleService roleService, PasswordEncoder passwordEncoder, NotificationCommandPublisher notificationCommandPublisher) {
         this.userRepository = userRepository;
         this.userEventPublisher = userEventPublisher;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.notificationCommandPublisher = notificationCommandPublisher;
     }
 
     @Override
@@ -60,6 +68,13 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(userModel);
 
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.DELETE));
+
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Delete - Exclusão", userModel.getName() + " seu registro foi excluído com sucesso!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
     }
 
     @Transactional
@@ -77,6 +92,13 @@ public class UserServiceImpl implements UserService {
 
 //      TODO - AI - enviar uma notificação com o link para inserção de user com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.CREATE));
+
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Register User - Inclusão", userModel.getName() + " seu registro foi criado com sucesso!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
 
         return userModel;
     }
@@ -102,6 +124,13 @@ public class UserServiceImpl implements UserService {
 
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.UPDATE));
 
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Update - Atualização", userModel.getName() + " seu registro foi atualizado com sucesso!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
+
         return userModel;
     }
 
@@ -113,6 +142,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userModel);
 
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.UPDATE));
+
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Update Active - Atualização", userModel.getName() + " seu registro está ativo!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
 
         return userModel;
     }
@@ -126,6 +162,13 @@ public class UserServiceImpl implements UserService {
 
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.UPDATE));
 
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Update Blocked - Atualização", userModel.getName() + " seu registro está bloqueado!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
+
         return userModel;
     }
 
@@ -134,6 +177,13 @@ public class UserServiceImpl implements UserService {
         userModel.setPassword(passwordEncoder.encode(userRecordDto.password()));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userRepository.save(userModel);
+
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Update Password - Atualização", userModel.getName() + " seu password foi atualizado com sucesso!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
 
         return userModel;
     }
@@ -146,6 +196,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userModel);
 
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.UPDATE));
+
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Update image - Atualização", userModel.getName() + " sua imagem foi atualizada com sucesso!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
 
         return userModel;
     }
@@ -165,6 +222,13 @@ public class UserServiceImpl implements UserService {
 
 //      TODO - AI - enviar uma notificação com o link para inserção de user com userId para conclusão do cadastro e consequentemente a alteração do status acima para active
         userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(ActionType.CREATE));
+
+        try {
+            var notificationRecordCommandDto = new NotificationRecordCommandDto("Register Adm - Inclusão", userModel.getName() + " seu registro de adm foi criado com sucesso!", userModel.getUserId());
+            notificationCommandPublisher.publishNotificationCommand(notificationRecordCommandDto);
+        } catch (Exception e){
+            logger.error("Error sending notification message with cause: {} ", e.getMessage());
+        }
 
         return userModel;
     }
